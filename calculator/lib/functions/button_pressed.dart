@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
 
 String _output = "";
-String _currentNumber = "";
-String _operand = "";
-bool _operandPressed = false;
-String lastCharacter = '';
-bool lastCharacterValue = false;
-String answer = '';
 
 List<String> tokens = [];
 List<String> tokenAnswer = [];
@@ -18,39 +12,56 @@ bool isOperand(String char) {
   return char == '+' || char == '-' || char == '*' || char == '/';
 }
 
+bool lastCharacterValue = false;
+String lastCharacter = '';
+
+bool isLastCharacterOperand(output) {
+  if (_output.isEmpty) {
+    return false;
+  }
+  lastCharacter = _output.substring(_output.length - 1);
+  if (isOperand(lastCharacter)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 void buttonPressed(String buttonText, Function(String) setStateCallback) {
   if (buttonText == 'C') {
     _output = '';
-    _operand = "";
-    _operandPressed = false;
     setStateCallback('0');
   } else if (buttonText == '+' ||
       buttonText == '-' ||
       buttonText == '/' ||
       buttonText == '*') {
-    _operand = buttonText;
-    _operandPressed = true;
-    _output += buttonText;
-    setStateCallback(_output);
-  } else if (buttonText == 'del') {
-    if (_output.isNotEmpty) {
-      _output = _output.substring(0, _output.length - 1);
+    lastCharacterValue = isLastCharacterOperand(_output);
+    if (lastCharacterValue == true) {
+      lastCharacter = _output.substring(_output.length - 1);
+
+      if (lastCharacter == buttonText) {
+      } else {
+        _output = _output.substring(0, _output.length - 1);
+        _output += buttonText;
+        setStateCallback(_output);
+      }
+    } else {
+      _output += buttonText;
       tokenAnswer = tokenizeExpression(_output);
       tokens = [];
       setStateCallback(_output);
       print(tokenAnswer);
       print(calculate(tokenAnswer));
+    }
+  } else if (buttonText == 'del') {
+    if (_output.isNotEmpty) {
+      _output = _output.substring(0, _output.length - 1);
+      getAnswer(_output, buttonText, setStateCallback);
     } else {
       setStateCallback('0');
     }
   } else if (buttonText == '=') {
-    print(_output);
-    tokenAnswer = tokenizeExpression(_output);
-    tokens = [];
-    setStateCallback(_output);
-
-    print(tokenAnswer);
-    print(calculate(tokenAnswer));
+    getAnswer(_output, buttonText, setStateCallback);
   } else {
     _output += buttonText;
     setStateCallback(_output);
@@ -110,4 +121,13 @@ double calculate(List<String> tokens) {
   }
 
   return result;
+}
+
+void getAnswer(_output, buttonText, setStateCallback) {
+  _output += buttonText;
+  tokenAnswer = tokenizeExpression(_output);
+  tokens = [];
+
+  print(tokenAnswer);
+  print(calculate(tokenAnswer));
 }
