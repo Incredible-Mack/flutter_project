@@ -1,4 +1,4 @@
-package com.example.ltqrcodegen
+package com.lovetoons.ltqrcode
 
 import io.flutter.embedding.android.FlutterActivity
 
