@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ltqrcode/pages/qr_scan.dart';
 import 'package:ltqrcode/routes/routes.dart';
 
 class Homepage extends StatelessWidget {
